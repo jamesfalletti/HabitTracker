@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Habit Tracker</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--text:#16181d;--muted:#7a808c;--line:#e8eaee;--good:#22a06b;--bad:#e5484d;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1114;--card:#1a1d22;--text:#f1f3f6;--muted:#8b919d;--line:#2a2e35;--good:#34c48a;--bad:#f2686d}}
+:root[data-theme="dark"]{--bg:#0f1114;--card:#1a1d22;--text:#f1f3f6;--muted:#8b919d;--line:#2a2e35;--good:#34c48a;--bad:#f2686d}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:480px;margin:0 auto;padding:16px 16px 40px}
+.tabs{display:flex;background:var(--line);border-radius:12px;padding:3px;margin-bottom:14px}
+.tabs button{flex:1;border:0;background:none;color:var(--muted);font-size:15px;font-weight:600;padding:9px 0;border-radius:10px}
+.tabs button.on{background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.nav{display:flex;align-items:center;justify-content:space-between;margin:8px 0 16px}
+.nav h1{font-size:20px;margin:0;text-align:center}
+.nav small{display:block;color:var(--muted);font-weight:400;font-size:13px}
+.nav button{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:20px}
+.nav button:disabled{opacity:.3}
+section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 16px 12px;margin-bottom:16px}
+.head{display:flex;justify-content:space-between;align-items:center;padding:12px 0 4px}
+.head h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;margin:0}
+.good .head h2{color:var(--good)}.bad .head h2{color:var(--bad)}
+.head span{color:var(--muted);font-size:13px}
+.row{display:flex;align-items:center;gap:14px;min-height:60px;border-bottom:1px solid var(--line);cursor:pointer}
+.row:last-of-type{border-bottom:0}
+.box{flex:none;width:30px;height:30px;border-radius:9px;border:2px solid var(--line);display:grid;place-items:center;color:#fff;font-size:18px;transition:.15s}
+.good .row.done .box{background:var(--good);border-color:var(--good)}
+.bad .row.done .box{background:var(--bad);border-color:var(--bad)}
+.name{flex:1;word-break:break-word}
+.name small{display:block;color:var(--muted);font-size:13px}
+.row.done .name b{color:var(--muted);font-weight:400}
+.fl{flex:none;display:inline-flex;align-items:center;gap:10px;vertical-align:middle}
+.fire{font-size:15px;font-weight:600;color:var(--muted);opacity:.6}.fire.on{color:var(--text);opacity:1}
+.fz{position:relative;width:32px;height:32px;display:grid;place-items:center}
+.fz svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.fz .tr{fill:none;stroke:var(--line);stroke-width:3}
+.fz .pr{fill:none;stroke:#4aa3df;stroke-width:3;stroke-linecap:round;transition:.3s}
+.fz em{font-style:normal;font-size:15px;line-height:1}
+.fz b{position:absolute;left:-4px;bottom:-3px;min-width:15px;height:15px;border-radius:8px;background:#4aa3df;color:#fff;font-size:10px;display:grid;place-items:center;padding:0 3px}
+.note{color:var(--muted);font-size:12px;text-align:center;margin:4px 12px 0}
+.pg{display:flex;align-items:center;gap:8px;margin-top:5px}.pg i{flex:1;max-width:90px;height:4px;border-radius:2px;background:var(--line);overflow:hidden}.pg u{display:block;height:100%;background:#4aa3df}.pg span{font-size:11px;color:var(--muted)}
+.del{border:0;background:none;color:var(--muted);font-size:22px;width:40px;height:40px;display:none}
+.edit .fl{flex:none;display:inline-flex;align-items:center;gap:10px;vertical-align:middle}
+.fire{font-size:15px;font-weight:600;color:var(--muted);opacity:.6}.fire.on{color:var(--text);opacity:1}
+.fz{position:relative;width:32px;height:32px;display:grid;place-items:center}
+.fz svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.fz .tr{fill:none;stroke:var(--line);stroke-width:3}
+.fz .pr{fill:none;stroke:#4aa3df;stroke-width:3;stroke-linecap:round;transition:.3s}
+.fz em{font-style:normal;font-size:15px;line-height:1}
+.fz b{position:absolute;left:-4px;bottom:-3px;min-width:15px;height:15px;border-radius:8px;background:#4aa3df;color:#fff;font-size:10px;display:grid;place-items:center;padding:0 3px}
+.note{color:var(--muted);font-size:12px;text-align:center;margin:4px 12px 0}
+.pg{display:flex;align-items:center;gap:8px;margin-top:5px}.pg i{flex:1;max-width:90px;height:4px;border-radius:2px;background:var(--line);overflow:hidden}.pg u{display:block;height:100%;background:#4aa3df}.pg span{font-size:11px;color:var(--muted)}
+.del{display:block}
+.empty{color:var(--muted);padding:14px 0;font-size:15px}
+.add{display:flex;gap:8px;margin-top:8px}
+.add input{flex:1;min-width:0;font-size:16px;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--text)}
+.add button{border:0;border-radius:12px;padding:0 16px;font-size:15px;font-weight:600;color:#fff}
+.good .add button{background:var(--good)}.bad .add button{background:var(--bad)}
+.toggle{display:block;margin:0 auto;background:none;border:0;color:var(--muted);font-size:14px;padding:10px}
+.sum{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.sum div{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.sum b{font-size:26px;display:block}.sum span{color:var(--muted);font-size:13px}
+.st{padding:12px 0;border-bottom:1px solid var(--line)}.st:last-child{border-bottom:0}
+.st .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.st .pct{font-weight:700}
+.good .pct{color:var(--good)}.bad .pct{color:var(--bad)}
+.st small{color:var(--muted);font-size:13px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin-top:8px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:4px}
+.good .bar i{background:var(--good)}.bad .bar i{background:var(--bad)}
+.dots{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:8px;text-align:center}
+.dots span{font-size:11px;color:var(--muted)}
+.dots i{display:block;height:26px;border-radius:8px;background:var(--line)}
+.dots i.n{opacity:.4}
+.good .dots i.y{background:var(--good)}.bad .dots i.y{background:var(--bad)}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+const KEY="habit-tracker-v1";
+let S={habits:[],log:{}};
+try{const r=localStorage.getItem(KEY);if(r)S=JSON.parse(r)}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const today=iso(new Date());
+const addD=(k,n)=>{const [y,m,d]=k.split("-").map(Number);return iso(new Date(y,m-1,d+n))};
+const first=Object.keys(S.log).sort()[0]||today;
+S.habits.forEach(h=>{if(!h.created)h.created=first});
+let day=today,editing=false,view="day";
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const done=(h,k)=>(S.log[k]||[]).includes(h.id);
+const ok=(h,k)=>h.type==="good"?done(h,k):!done(h,k);
+function sim(h){let s=0,b=0,f=0,e=0;for(let k=h.created;k<=today;k=addD(k,1)){const d=done(h,k);
+ if(h.type==="good"){if(d){s++;e++;if(e>=7){e=0;f=Math.min(2,f+1)}}else if(k<today){if(f>0)f--;else{s=0;e=0}}}
+ else{if(d)s=s>>1;else s++}
+ b=Math.max(b,s)}
+ return{s,b,f,e}}
+function streak(h){return sim(h).s}
+function best(h){return sim(h).b}
+const range=n=>Array.from({length:n},(_,i)=>addD(today,i-n+1));
+function stat(h,n){const ds=range(n).filter(k=>k>=h.created);const o=ds.filter(k=>ok(h,k)).length;return{days:ds.length,ok:o,pct:ds.length?Math.round(o/ds.length*100):0}}
+function shift(n){const k=addD(day,n);if(k<=today){day=k;render()}}
+function label(){const [y,m,d]=day.split("-").map(Number);const dt=new Date(y,m-1,d);
+ return {t:day===today?"Today":dt.toLocaleDateString(undefined,{weekday:"long"}),s:dt.toLocaleDateString(undefined,{month:"long",day:"numeric"})}}
+function toggle(id){const l=S.log[day]||(S.log[day]=[]);const i=l.indexOf(id);i>=0?l.splice(i,1):l.push(id);save();render()}
+function add(type){const el=document.getElementById("in-"+type);const v=el.value.trim();if(!v)return;
+ S.habits.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),name:v,type,created:today});save();render()}
+function del(id){if(!confirm("Delete this habit?"))return;S.habits=S.habits.filter(h=>h.id!==id);for(const k in S.log)S.log[k]=S.log[k].filter(x=>x!==id);save();render()}
+function fl(h){const m=sim(h);let z="";
+ if(h.type==="good"){const C=94.25,full=m.f>=2;
+  z=`<span class="fz">${full?"":`<svg viewBox="0 0 36 36"><circle class="tr" cx="18" cy="18" r="15"/><circle class="pr" cx="18" cy="18" r="15" stroke-dasharray="${C}" stroke-dashoffset="${(C*(1-m.e/7)).toFixed(2)}"/></svg>`}<em>❄️</em>${m.f?`<b>${m.f}</b>`:""}</span>`}
+ return `<span class="fl"><span class="fire${m.s?" on":""}">🔥 ${m.s}</span>${z}</span>`}
+function sec(type,title){
+ const hs=S.habits.filter(h=>h.type===type),l=S.log[day]||[];
+ const n=hs.filter(h=>l.includes(h.id)).length;
+ return `<section class="${type}"><div class="head"><h2>${title}</h2><span>${n}/${hs.length}</span></div>`+
+ (hs.length?hs.map(h=>`<div class="row ${l.includes(h.id)?"done":""}" onclick="toggle('${h.id}')"><div class="box">${l.includes(h.id)?"✓":""}</div><div class="name"><b>${esc(h.name)}</b></div>${fl(h)}<button class="del" onclick="event.stopPropagation();del('${h.id}')" aria-label="Delete">×</button></div>`).join(""):`<div class="empty">No ${type} habits yet.</div>`)+
+ `<div class="add"><input id="in-${type}" placeholder="Add a ${type} habit" maxlength="60" onkeydown="if(event.key==='Enter')add('${type}')"><button onclick="add('${type}')">Add</button></div></section>`}
+function stats(n){
+ const G=S.habits.filter(h=>h.type==="good"),B=S.habits.filter(h=>h.type==="bad");
+ let gd=0,go=0;G.forEach(h=>{const s=stat(h,n);gd+=s.days;go+=s.ok});
+ let slips=0;B.forEach(h=>{const s=stat(h,n);slips+=s.days-s.ok});
+ const bs=S.habits.reduce((m,h)=>Math.max(m,streak(h)),0);
+ const days=range(7);
+ const blk=(hs,type,title)=>`<section class="${type}"><div class="head"><h2>${title}</h2></div>`+(hs.length?hs.map(h=>{const s=stat(h,n);
+  const vis=n===7?`<div class="dots">${days.map(k=>`<span>${new Date(k+"T12:00").toLocaleDateString(undefined,{weekday:"narrow"})}</span>`).join("")}${days.map(k=>`<i class="${k<h.created?"n":done(h,k)?"y":""}"></i>`).join("")}</div>`:`<div class="bar"><i style="width:${s.pct}%"></i></div>`;
+  return `<div class="st"><div class="top"><div><b>${esc(h.name)}</b> ${fl(h)}<br><small>Best streak ${best(h)}</small></div><div class="pct">${s.pct}%</div></div>${vis}</div>`}).join(""):`<div class="empty">No ${type} habits yet.</div>`)+`</section>`;
+ return `<div class="sum"><div><b>${G.length&&gd?Math.round(go/gd*100):0}%</b><span>Good habits done</span></div><div><b>${slips}</b><span>Bad habit slips</span></div><div><b>${bs}</b><span>Longest current streak</span></div><div><b>${S.habits.length}</b><span>Habits tracked</span></div></div>`+blk(G,"good","Good habits")+blk(B,"bad","Bad habits")}
+function render(){
+ const a=document.activeElement,keep=a&&a.id?{id:a.id,v:a.value}:null;
+ const tab=(v,t)=>`<button class="${view===v?"on":""}" onclick="view='${v}';render()">${t}</button>`;
+ let h=`<div class="tabs">${tab("day","Day")}${tab("week","Week")}${tab("month","Month")}</div>`;
+ if(view==="day"){const L=label();
+  h+=`<div class="nav"><button onclick="shift(-1)" aria-label="Previous day">‹</button><h1>${L.t}<small>${L.s}</small></h1><button onclick="shift(1)" ${day>=today?"disabled":""} aria-label="Next day">›</button></div>`+
+  sec("good","Good habits")+sec("bad","Bad habits")+
+  `<button class="toggle" onclick="editing=!editing;render()">${editing?"Done editing":"Edit / delete habits"}</button><p class="note">❄️ Good habits earn a freeze every 7 days (max 2) that covers a missed day. A bad-habit slip cuts your streak in half.</p>`;
+ }else h+=`<div class="nav"><h1 style="margin:0 auto">${view==="week"?"Last 7 days":"Last 30 days"}</h1></div>`+stats(view==="week"?7:30);
+ const app=document.getElementById("app");app.className=editing&&view==="day"?"edit":"";app.innerHTML=h;
+ if(keep){const e=document.getElementById(keep.id);if(e)e.value=keep.v}
+}
+save();render();
+</script>
+</body>
+</html>
